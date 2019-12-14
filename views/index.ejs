@@ -1,0 +1,103 @@
+<html>
+<head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+  
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: .5%;
+    }
+
+    form button {
+      width: 9%;
+      background: sk;
+      color:white;
+      border: none;
+      padding: 10px;
+    }
+
+    
+  </style>
+</head>
+<body>
+<select>
+  <option value="1번방">1번방</option>
+  <option value="2번방">2번방</option>
+  <option value="3번방">3번방</option>
+
+</select>
+<ul id="messages"></ul>
+<form action="">
+  <input id="m" autocomplete="off"/>
+  <button>보내기</button>
+</form>
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  $(() => {
+    const name = prompt('이름을 입력해주세요');
+    const socket = io();
+    let room = ['room1', 'room2','room3'];
+    let num = 0;
+
+    socket.emit('joinRoom', num, name);
+
+    $('select').change(() => {
+      socket.emit('leaveRoom', num, name);
+      num++;
+      num = num % 3;
+      socket.emit('joinRoom', num, name);
+    });
+
+
+    $('form').submit(() => {
+      socket.emit('chat-msg', num, name, $('#m').val());
+      $('#m').val('');
+      return false;
+    });
+
+    socket.on('chat-msg', (name, msg) => {
+      $('#messages').append($('<li>').text(name + '  :  ' +
+        msg));
+    });
+
+    socket.on('leaveRoom', (num, name) => {
+      $('#messages').append($('<li>').text(name + '    leaved '
+        + room[num] + ' :('));
+    });
+
+    socket.on('joinRoom', (num, name) => {
+      $('#messages').append($('<li>').text(`${name}님이 ${room[num]}에 입장하셨습니다.`));
+    });
+  });
+</script>
+</body>
+</html>

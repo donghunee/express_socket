@@ -1,103 +1,43 @@
+<!DOCTYPE html>
 <html>
-<head>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10">
+    </head>
+    <body>
+        <form action=''>
+            <input id="userName" />
+            <input id="message" />
+            <button>제출</button>
+        </form>
 
-    body {
-      font: 13px Helvetica, Arial;
-    }
+        <div id="messages">
+        </div>
 
-    form {
-      background: #000;
-      padding: 3px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-    }
+        <main id="boxApp">
 
-    form input {
-      border: 0;
-      padding: 10px;
-      width: 90%;
-      margin-right: .5%;
-    }
+        </main> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+        <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+        <script>
+            var socket = io();
+            
+            $('form').submit(function(){
+                const userName = $('#userName').val();
+                const message = $('#message').val();
 
-    form button {
-      width: 9%;
-      background: rgb(130, 224, 255);
-      border: none;
-      padding: 10px;
-    }
+                socket.emit('chat-msg', {userName:userName, message:message});
+                $('#message').val('');
+                return false;
+              });
+                
+              socket.on('chat-msg', function(msg){
+                $('#messages').append($('<li>').text(`${msg.userName} : ${msg.message}`));
+              });
 
-    #messages {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    #messages li {
-      padding: 5px 10px;
-    }
-
-    #messages li:nth-child(odd) {
-      background: #eee;
-    }
-  </style>
-</head>
-<body>
-<select>
-  <option value="Room1">Room1</option>
-  <option value="Room2">Room2</option>
-</select>
-<ul id="messages"></ul>
-<form action="">
-  <input id="m" autocomplete="off"/>
-  <button>Send</button>
-</form>
-<script src="/socket.io/socket.io.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-<script>
-  $(() => {
-    const name = prompt('What your name');
-    const socket = io();
-    let room = ['room1', 'room2'];
-    let num = 0;
-
-    socket.emit('joinRoom', num, name);
-
-    $('select').change(() => {
-      socket.emit('leaveRoom', num, name);
-      num++;
-      num = num % 2;
-      socket.emit('joinRoom', num, name);
-    });
-
-
-    $('form').submit(() => {
-      socket.emit('chat message', num, name, $('#m').val());
-      $('#m').val('');
-      return false;
-    });
-
-    socket.on('chat message', (name, msg) => {
-      $('#messages').append($('<li>').text(name + '  :  ' +
-        msg));
-    });
-
-    socket.on('leaveRoom', (num, name) => {
-      $('#messages').append($('<li>').text(name + '    leaved '
-        + room[num] + ' :('));
-    });
-
-    socket.on('joinRoom', (num, name) => {
-      $('#messages').append($('<li>').text(name + '    joined '
-        + room[num] + ':)'));
-    });
-  });
-</script>
-</body>
+        </script>
+    </body>
 </html>

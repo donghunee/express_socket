@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var app = express();
+
 
 // var server = require('http').Server(app)
 // var io = require('socket.io')(server);
@@ -12,11 +12,10 @@ var app = express();
 
 var indexRouter = require('./routes/index');
 
-
 let room = ['room1', 'room2', 'room3'];
 let a = 0;
 
-
+var app = express();
 app.io = require('socket.io')();
 
 app.io.on('connection',(socket) => {
@@ -36,7 +35,7 @@ app.io.on('connection',(socket) => {
   });
 
   socket.on('disconnect', () => {
-      console.log('user disconnected');
+    console.log('user disconnected');
   });
 
   socket.on('chat-msg', (num, name, msg) => {

@@ -11,7 +11,7 @@ const socket = require('socket.io')
 /**
  * Get port from environment and store in Express.
  */
-
+console.log("야야")
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);

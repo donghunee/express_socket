@@ -42,24 +42,30 @@ app.io.on('connection',(socket) => {
 
 $(() => {
     const name = prompt('이름을 입력해주세요');
-    const name = prompt('이름을 입력해주세요');
+    const target = prompt('이름을 입력해주세요');
 
     const socket = io();
+
     let room = ['room1', 'room2','room3'];
     let num = 0;
 
     socket.emit('joinRoom', num, name);
 
+
+
     $('select').change(() => {
-      socket.emit('leaveRoom', num, name);
-      num++;
-      num = num % 3;
-      socket.emit('joinRoom', num, name);
+    //   socket.emit('leaveRoom', num, name);
+    //   num++;
+    //   num = num % 3;
+    //   socket.emit('connect',name,target);
+
+    //   socket.emit('joinRoom', num, name);
     });
 
 
     $('form').submit(() => {
-      socket.emit('chat-msg', num, name, $('#m').val());
+    //   socket.emit('chat-msg', num, name, $('#m').val());
+      socket.emit('chat-msg',name,target,$('#m').val());
       $('#m').val('');
       return false;
     });

@@ -64,7 +64,6 @@ $(() => {
 
 
     $('form').submit(() => {
-    //   socket.emit('chat-msg', num, name, $('#m').val());
       socket.emit('chat-msg',name,target,$('#m').val());
       $('#m').val('');
       return false;

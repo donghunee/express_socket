@@ -21,11 +21,11 @@ app.io.on("connection", socket => {
   app.io.to(socket.id).emit("start", socket.id);
 
   socket.on("leaveRoom", roomName => {
-    // socket.disconnect();
-    // socket.conn.close();
-    // console.log(roomName);
+    socket.disconnect();
+    socket.conn.close();
+    console.log(roomName);
     socket.leave(roomName, () => {
-      // console.log(roomName);
+      console.log("leave");
       // console.log(socket.adapter.rooms[roomName]);
       try {
         const itemToFind = socket.adapter.rooms[roomName].userList.find(
@@ -38,7 +38,7 @@ app.io.on("connection", socket => {
         let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
         if (idx > -1) {
           if (socket.adapter.rooms[roomName].userList[idx].king == true) {
-            console.log("킹이 나갔다");
+            console.log("king emit");
             if (socket.adapter.rooms[roomName].userList[idx + 1]) {
               socket.adapter.rooms[roomName].userList[idx + 1].king = true;
             }
@@ -82,9 +82,11 @@ app.io.on("connection", socket => {
         wrap.king = false;
         wrap.queryUser = false;
       }
+
       if (!socket.adapter.rooms[roomName].userList) {
         socket.adapter.rooms[roomName].userList = [];
       }
+
       socket.adapter.rooms[roomName].userList.push(wrap);
       let userWrap = {};
       userWrap.userList = socket.adapter.rooms[roomName].userList;

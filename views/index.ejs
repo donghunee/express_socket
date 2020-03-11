@@ -75,6 +75,7 @@
 
       $('select').change(() => {
         socket.emit('leaveRoom', num, name);
+
       });
 
       $('form').submit(() => {

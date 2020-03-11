@@ -68,7 +68,6 @@ app.io.on("connection", socket => {
 
   socket.on("joinRoom", (roomName, name) => {
     console.log(socket.id);
-    let roomName = roomName.toString();
     socket.join(roomName, () => {
       // console.log(name + " join a " + roomName);
       socket.adapter.rooms[roomName].sockets[socket.id] = name;

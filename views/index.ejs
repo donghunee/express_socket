@@ -75,9 +75,6 @@
 
       $('select').change(() => {
         socket.emit('leaveRoom', num, name);
-        num++;
-        num = num % 3;
-        socket.emit('joinRoom', num, name);
       });
 
       $('form').submit(() => {

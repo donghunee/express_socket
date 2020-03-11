@@ -21,8 +21,8 @@ app.io.on("connection", socket => {
   app.io.to(socket.id).emit("start", socket.id);
 
   socket.on("leaveRoom", roomName => {
-    socket.disconnect();
-    socket.conn.close();
+    // socket.disconnect();
+    // socket.conn.close();
     console.log(roomName);
     socket.leave(roomName, () => {
       console.log("leave");
@@ -87,10 +87,22 @@ app.io.on("connection", socket => {
         socket.adapter.rooms[roomName].userList = [];
       }
 
-      socket.adapter.rooms[roomName].userList.push(wrap);
-      let userWrap = {};
-      userWrap.userList = socket.adapter.rooms[roomName].userList;
-      userWrap.question = "랜덤 질문";
+      const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
+        item
+      ) {
+        return item.userID === socket.id;
+      });
+
+      // console.log(itemToFind);
+      let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
+      if (idx > -1) {
+      } else {
+        socket.adapter.rooms[roomName].userList.push(wrap);
+        let userWrap = {};
+        userWrap.userList = socket.adapter.rooms[roomName].userList;
+        userWrap.question = "랜덤 질문";
+      }
+
       // console.log(roomName.toString());
       console.log(socket.adapter.rooms[roomName].userList);
       app.io

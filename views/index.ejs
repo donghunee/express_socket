@@ -86,9 +86,9 @@
         return false;
       });
 
-      socket.on('chat-msg', (name, msg) => {
-        $('#messages').append($('<li>').text(name + '  :  ' +
-          msg));
+      socket.on('userList', (name) => {
+        alert(name);
+        console.log(name)
       });
 
       socket.on('leaveRoom', (num, name) => {

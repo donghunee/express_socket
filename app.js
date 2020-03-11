@@ -13,6 +13,7 @@ let room = ["room1", "room2", "room3"];
 let a = 0;
 
 var app = express();
+
 app.io = require("socket.io")();
 
 app.io.on("connection", socket => {
@@ -66,7 +67,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("joinRoom", (roomName, name) => {
-    // console.log(socket.id);
+    console.log(socket.id);
     socket.join(roomName, () => {
       // console.log(name + " join a " + roomName);
       socket.adapter.rooms[roomName].sockets[socket.id] = name;
@@ -87,11 +88,11 @@ app.io.on("connection", socket => {
       let userWrap = {};
       userWrap.userList = socket.adapter.rooms[roomName].userList;
       userWrap.question = "랜덤 질문";
-      console.log(socket.adapter.rooms[roomName]);
+      console.log(roomName.toString());
+      console.log(socket.adapter.rooms[roomName].userList);
       app.io
-        .in(roomName)
+        .in(roomName.toString())
         .emit("userList", socket.adapter.rooms[roomName].userList);
-      console.log(roomName);
     });
   });
 

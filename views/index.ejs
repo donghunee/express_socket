@@ -1,4 +1,5 @@
 <html>
+
 <head>
   <style>
     * {
@@ -12,7 +13,7 @@
       margin: 0;
       padding: 0;
     }
-  
+
     #messages li {
       padding: 5px 10px;
     }
@@ -27,8 +28,8 @@
     }
 
     form select {
-        width:120px;
-        height: 100%;
+      width: 120px;
+      height: 100%;
     }
 
     form input {
@@ -41,62 +42,64 @@
     form button {
       width: 9%;
       background: skyblue;
-      color:white;
+      color: white;
       border: none;
       padding: 10px;
     }
   </style>
 </head>
+
 <body>
 
-<ul id="messages"></ul>
-<form action="">
+  <ul id="messages"></ul>
+  <form action="">
     <select>
-        <option value="1번방">1번방</option>
-        <option value="2번방">2번방</option>
-        <option value="3번방">3번방</option>
+      <option value="1번방">1번방</option>
+      <option value="2번방">2번방</option>
+      <option value="3번방">3번방</option>
     </select>
-  <input id="m" autocomplete="off"/>
-  <button>보내기</button>
-</form>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script>
-  $(() => {
-    const name = prompt('이름을 입력해주세요');
+    <input id="m" autocomplete="off" />
+    <button>보내기</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    $(() => {
+      const name = prompt('이름을 입력해주세요');
 
-    const socket = io();
-    let room = ['room1', 'room2','room3'];
-    let num = 0;
+      const socket = io();
+      let room = ['room1', 'room2', 'room3'];
+      let num = 1;
 
-    socket.emit('joinRoom', num, name);
-
-    $('select').change(() => {
-      socket.emit('leaveRoom', num, name);
-      num++;
-      num = num % 3;
       socket.emit('joinRoom', num, name);
-    });
 
-    $('form').submit(() => {
-      socket.emit('chat-msg', num, name, $('#m').val());
-      $('#m').val('');
-      return false;
-    });
+      $('select').change(() => {
+        socket.emit('leaveRoom', num, name);
+        num++;
+        num = num % 3;
+        socket.emit('joinRoom', num, name);
+      });
 
-    socket.on('chat-msg', (name, msg) => {
-      $('#messages').append($('<li>').text(name + '  :  ' +
-        msg));
-    });
+      $('form').submit(() => {
+        socket.emit('chat-msg', num, name, $('#m').val());
+        $('#m').val('');
+        return false;
+      });
 
-    socket.on('leaveRoom', (num, name) => {
-      $('#messages').append($('<li>').text(`${name}님이 ${num+1}번 방을 퇴장하셨습니다. :[`));
-    });
+      socket.on('chat-msg', (name, msg) => {
+        $('#messages').append($('<li>').text(name + '  :  ' +
+          msg));
+      });
 
-    socket.on('joinRoom', (num, name) => {
-      $('#messages').append($('<li>').text(`${name}님이 ${num+1}번 방에 입장하셨습니다. :]`));
+      socket.on('leaveRoom', (num, name) => {
+        $('#messages').append($('<li>').text(`${name}님이 ${num+1}번 방을 퇴장하셨습니다. :[`));
+      });
+
+      socket.on('joinRoom', (num, name) => {
+        $('#messages').append($('<li>').text(`${name}님이 ${num+1}번 방에 입장하셨습니다. :]`));
+      });
     });
-  });
-</script>
+  </script>
 </body>
+
 </html>

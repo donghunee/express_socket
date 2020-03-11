@@ -68,6 +68,7 @@ app.io.on("connection", socket => {
 
   socket.on("joinRoom", (roomName, name) => {
     console.log(socket.id);
+
     socket.join(roomName, () => {
       // console.log(name + " join a " + roomName);
       socket.adapter.rooms[roomName].sockets[socket.id] = name;
@@ -88,7 +89,7 @@ app.io.on("connection", socket => {
       let userWrap = {};
       userWrap.userList = socket.adapter.rooms[roomName].userList;
       userWrap.question = "랜덤 질문";
-      console.log(roomName.toString());
+      // console.log(roomName.toString());
       console.log(socket.adapter.rooms[roomName].userList);
       app.io
         .in(roomName.toString())

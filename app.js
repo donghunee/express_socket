@@ -44,6 +44,12 @@ app.io.on("connection", socket => {
           }
           socket.adapter.rooms[roomName].userList.splice(idx, 1);
         }
+        if (socket.adapter.rooms[roomName].userList) {
+          app.io
+            .in(roomName)
+            .emit("userList", socket.adapter.rooms[roomName].userList);
+        } else {
+        }
       } catch (error) {
         console.log(error);
       }
@@ -58,9 +64,7 @@ app.io.on("connection", socket => {
       // if (socket.adapter.rooms[roomName].userList.length >= 1) {
       //   console.log("Qwe");
       // }
-      app.io
-        .in(roomName)
-        .emit("userList", socket.adapter.rooms[roomName].userList);
+
       // }
     });
   });

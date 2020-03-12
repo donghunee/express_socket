@@ -9,7 +9,7 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 
-let room = ["room1", "room2", "room3"];
+let room = [];
 let a = 0;
 
 var app = express();
@@ -71,10 +71,11 @@ app.io.on("connection", socket => {
   socket.on("joinRoom", (roomName, name) => {
     socket.join(roomName, () => {
       // console.log(name + " join a " + roomName);
-      socket.adapter.rooms[roomName].sockets[socket.id] = name;
+      // socket.adapter.rooms[roomName].sockets[socket.id] = name;
       let wrap = {};
       wrap.userID = socket.id;
       wrap.userNickname = name;
+
       if (socket.adapter.rooms[roomName].length == 1) {
         wrap.king = true;
         wrap.queryUser = false;

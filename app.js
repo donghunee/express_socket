@@ -140,6 +140,7 @@ app.io.on("connection", socket => {
   socket.on("pong", function(data) {
     console.log("Pong received from client");
   });
+
   setTimeout(sendHeartbeat, 9000);
 
   function sendHeartbeat() {

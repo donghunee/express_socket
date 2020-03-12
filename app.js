@@ -18,6 +18,8 @@ app.io = require("socket.io")();
 
 app.io.on("connection", socket => {
   console.log("연결");
+  // setTimeout(sendHeartbeat, 9000);
+
   app.io.to(socket.id).emit("start", socket.id);
 
   socket.on("leaveRoom", roomName => {
@@ -140,8 +142,6 @@ app.io.on("connection", socket => {
   socket.on("pong", function(data) {
     console.log("Pong received from client");
   });
-
-  setTimeout(sendHeartbeat, 9000);
 
   function sendHeartbeat() {
     setTimeout(sendHeartbeat, 9000);

@@ -88,7 +88,9 @@
         alert(name);
         console.log(name)
       });
-
+      socket.on('ping', (name) => {
+        console.log("받음")
+      });
       socket.on('leaveRoom', (num, name) => {
         $('#messages').append($('<li>').text(`${name}님이 ${num+1}번 방을 퇴장하셨습니다. :[`));
       });

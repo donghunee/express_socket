@@ -67,8 +67,6 @@ app.io.on("connection", socket => {
   });
 
   socket.on("joinRoom", (roomName, name) => {
-    console.log(socket.id);
-
     socket.join(roomName, () => {
       // console.log(name + " join a " + roomName);
       socket.adapter.rooms[roomName].sockets[socket.id] = name;
@@ -102,7 +100,6 @@ app.io.on("connection", socket => {
         userWrap.userList = socket.adapter.rooms[roomName].userList;
         userWrap.question = "랜덤 질문";
       }
-
       // console.log(roomName.toString());
       console.log(socket.adapter.rooms[roomName].userList);
       app.io
@@ -139,6 +136,16 @@ app.io.on("connection", socket => {
       app.io.to(roomName).emit("chat-msg", name, msg);
     }
   });
+
+  socket.on("pong", function(data) {
+    console.log("Pong received from client");
+  });
+  setTimeout(sendHeartbeat, 9000);
+
+  function sendHeartbeat() {
+    setTimeout(sendHeartbeat, 9000);
+    app.io.emit("ping", { beat: 1 });
+  }
 });
 
 function coinadd() {}

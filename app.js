@@ -17,15 +17,12 @@ var app = express();
 app.io = require("socket.io")();
 
 app.io.on("connection", socket => {
-  console.log("연결");
-  // setTimeout(sendHeartbeat, 9000);
+  console.log("connent");
+  setTimeout(sendHeartbeat, 9000);
 
   app.io.to(socket.id).emit("start", socket.id);
 
   socket.on("leaveRoom", roomName => {
-    // socket.disconnect();
-    // socket.conn.close();
-    console.log(roomName);
     socket.leave(roomName, () => {
       console.log("leave");
       // console.log(socket.adapter.rooms[roomName]);
@@ -113,9 +110,6 @@ app.io.on("connection", socket => {
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
-    // socket.close();
-    // socket.disconnect();
-    // socket.conn.close();
   });
 
   socket.on("coin", (roomName, coin) => {

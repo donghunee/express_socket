@@ -116,6 +116,28 @@ app.io.on("connection", socket => {
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 
+  socket.on("continueGame", roomName => {
+    const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
+      item
+    ) {
+      return item.queryUser === true;
+    });
+    // console.log(itemToFind);
+    let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
+    if (idx > -1) {
+      socket.adapter.rooms[roomName].userList[idx].queryUser = false;
+      if (socket.adapter.rooms[roomName].userList.length == idx + 1) {
+        socket.adapter.rooms[roomName].userList[0].queryUser = true;
+      } else {
+        socket.adapter.rooms[roomName].userList[idx + 1].queryUser = true;
+      }
+    }
+    let userWrap = {};
+    userWrap.userList = socket.adapter.rooms[roomName].userList;
+    userWrap.question = "랜덤 질문";
+    app.io.in(roomName.toString()).emit("gameState", userWrap);
+  });
+
   socket.on("questionOK", roomName => {
     console.log("QuestOK");
 
@@ -174,6 +196,9 @@ app.io.on("connection", socket => {
     console.log("vote : " + voteNum);
     if (voteNum <= 0) {
       //투표 다 끝남
+      socket.adapter.rooms[roomName].vote.front = 0;
+      socket.adapter.rooms[roomName].vote.back = 0;
+      socket.adapter.rooms[roomName].vote.number = 0;
       let voteWrap = {};
       voteWrap.front = socket.adapter.rooms[roomName].vote.front;
       voteWrap.back = socket.adapter.rooms[roomName].vote.back;

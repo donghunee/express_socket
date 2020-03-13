@@ -184,7 +184,7 @@ app.io.on("connection", socket => {
     }
   });
 
-  socket.on("gameStatus", () => {
+  socket.on("gameStatus", roomName => {
     console.log("gameStatus");
     app.io.in(roomName.toString()).emit("gameStatus");
   });

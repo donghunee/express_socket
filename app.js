@@ -102,7 +102,7 @@ app.io.on("connection", socket => {
         userWrap.question = "랜덤 질문";
       }
       // console.log(roomName.toString());
-      console.log(socket.adapter.rooms[roomName].userList);
+      // console.log(socket.adapter.rooms[roomName].userList);
       app.io
         .in(roomName.toString())
         .emit("userList", socket.adapter.rooms[roomName].userList);
@@ -110,6 +110,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("startGame", roomName => {
+    console.log("startGame");
     if (!socket.adapter.rooms[roomName].userList) {
     } else {
       let userWrap = {};

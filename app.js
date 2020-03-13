@@ -178,7 +178,7 @@ app.io.on("connection", socket => {
       voteWrap.front = socket.adapter.rooms[roomName].vote.front;
       voteWrap.back = socket.adapter.rooms[roomName].vote.back;
 
-      app.io.in(roomName.toString()).emit("voteNum", voteWrap);
+      app.io.in(roomName.toString()).emit("voteOK", voteWrap);
     } else {
       app.io.in(roomName.toString()).emit("voteNum", { voteNum: voteNum });
     }

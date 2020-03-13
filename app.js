@@ -115,10 +115,10 @@ app.io.on("connection", socket => {
       console.log("null");
     } else {
       console.log("Ok");
-
       let userWrap = {};
       userWrap.userList = socket.adapter.rooms[roomName].userList;
       userWrap.question = "랜덤 질문";
+      console.log(userWrap);
       app.io.in(roomName.toString()).emit("gameState", userWrap);
     }
   });

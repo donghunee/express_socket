@@ -117,7 +117,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("questionOK", roomName => {
-    app.io.in(roomName.toString()).emit("questionOK", userWrap);
+    app.io.in(roomName.toString()).emit("questionOK");
   });
 
   socket.on("questionPass", roomName => {

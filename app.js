@@ -116,6 +116,14 @@ app.io.on("connection", socket => {
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 
+  socket.on("questionOK", roomName => {
+    app.io.in(roomName.toString()).emit("questionOK", userWrap);
+  });
+
+  socket.on("questionPass", roomName => {
+    app.io.in(roomName.toString()).emit("questionOK", userWrap);
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });

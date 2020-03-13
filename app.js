@@ -146,6 +146,44 @@ app.io.on("connection", socket => {
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 
+  socket.on("vote", (roomName, isFront) => {
+    if (socket.adapter.rooms[roomName].vote) {
+      socket.adapter.rooms[roomName].vote = {};
+      socket.adapter.rooms[roomName].vote.front = 0;
+      socket.adapter.rooms[roomName].vote.back = 0;
+      socket.adapter.rooms[roomName].vote.number = 0;
+      if (isFront) {
+        socket.adapter.rooms[roomName].vote.front += 1;
+        socket.adapter.rooms[roomName].vote.number += 1;
+      } else {
+        socket.adapter.rooms[roomName].vote.number += 1;
+        socket.adapter.rooms[roomName].vote.back += 1;
+      }
+    } else {
+      if (isFront) {
+        socket.adapter.rooms[roomName].vote.front += 1;
+        socket.adapter.rooms[roomName].vote.number += 1;
+      } else {
+        socket.adapter.rooms[roomName].vote.number += 1;
+        socket.adapter.rooms[roomName].vote.back += 1;
+      }
+    }
+    let voteNum =
+      socket.adapter.rooms[roomName].userList.length -
+      socket.adapter.rooms[roomName].vote.number;
+
+    if (voteNum <= 0) {
+      //투표 다 끝남
+      let voteWrap = {};
+      voteWrap.front = socket.adapter.rooms[roomName].vote.front;
+      voteWrap.back = socket.adapter.rooms[roomName].vote.back;
+
+      app.io.in(roomName.toString()).emit("voteNum", voteWrap);
+    } else {
+      app.io.in(roomName.toString()).emit("voteNum", { voteNum: voteNum });
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });

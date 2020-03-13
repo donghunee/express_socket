@@ -199,14 +199,15 @@ app.io.on("connection", socket => {
     console.log("vote : " + voteNum);
     if (voteNum <= 0) {
       //투표 다 끝남
-      socket.adapter.rooms[roomName].vote.front = 0;
-      socket.adapter.rooms[roomName].vote.back = 0;
-      socket.adapter.rooms[roomName].vote.number = 0;
+
       let voteWrap = {};
       voteWrap.front = socket.adapter.rooms[roomName].vote.front;
       voteWrap.back = socket.adapter.rooms[roomName].vote.back;
       console.log(voteWrap);
       app.io.in(roomName.toString()).emit("voteOK", voteWrap);
+      socket.adapter.rooms[roomName].vote.front = 0;
+      socket.adapter.rooms[roomName].vote.back = 0;
+      socket.adapter.rooms[roomName].vote.number = 0;
     } else {
       app.io.in(roomName.toString()).emit("voteNum", { voteNum: voteNum });
     }

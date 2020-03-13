@@ -117,7 +117,8 @@ app.io.on("connection", socket => {
   });
 
   socket.on("questionOK", roomName => {
-    app.io.in(roomName.toString()).emit("questionOK");
+    console.log("QuestOK");
+    app.io.in(roomName.toString()).emit("questionOK", { mi: "qwe" });
   });
 
   socket.on("questionPass", roomName => {

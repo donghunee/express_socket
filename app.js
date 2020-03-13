@@ -118,11 +118,30 @@ app.io.on("connection", socket => {
 
   socket.on("questionOK", roomName => {
     console.log("QuestOK");
-    app.io.in(roomName.toString()).emit("questionOK", { mi: "qwe" });
+
+    app.io.in(roomName.toString()).emit("questionOK");
   });
 
   socket.on("questionPass", roomName => {
-    app.io.in(roomName.toString()).emit("questionOK");
+    const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
+      item
+    ) {
+      return item.queryUser === true;
+    });
+    // console.log(itemToFind);
+    let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
+    if (idx > -1) {
+      socket.adapter.rooms[roomName].userList[idx].queryUser = false;
+      if (socket.adapter.rooms[roomName].userList.length == idx) {
+        socket.adapter.rooms[roomName].userList[0].queryUser = true;
+      } else {
+        socket.adapter.rooms[roomName].userList[idx + 1].queryUser = true;
+      }
+    }
+    let userWrap = {};
+    userWrap.userList = socket.adapter.rooms[roomName].userList;
+    userWrap.question = "랜덤 질문";
+    app.io.in(roomName.toString()).emit("questionOK", userWrap);
   });
 
   socket.on("disconnect", () => {

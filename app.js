@@ -142,7 +142,7 @@ app.io.on("connection", socket => {
     let userWrap = {};
     userWrap.userList = socket.adapter.rooms[roomName].userList;
     userWrap.question = "랜덤 질문";
-    console.log("Qpass:" + socket.adapter.rooms[roomName].userList);
+    console.log(socket.adapter.rooms[roomName].userList);
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 

@@ -79,22 +79,19 @@ app.io.on("connection", socket => {
 
       if (socket.adapter.rooms[roomName].length == 1) {
         wrap.king = true;
-        wrap.queryUser = false;
+        wrap.queryUser = true;
       } else {
         wrap.king = false;
         wrap.queryUser = false;
       }
-
       if (!socket.adapter.rooms[roomName].userList) {
         socket.adapter.rooms[roomName].userList = [];
       }
-
       const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
         item
       ) {
         return item.userID === socket.id;
       });
-
       // console.log(itemToFind);
       let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
       if (idx > -1) {
@@ -110,6 +107,13 @@ app.io.on("connection", socket => {
         .in(roomName.toString())
         .emit("userList", socket.adapter.rooms[roomName].userList);
     });
+  });
+
+  socket.on("startGame", roomName => {
+    let userWrap = {};
+    userWrap.userList = socket.adapter.rooms[roomName].userList;
+    userWrap.question = "랜덤 질문";
+    app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 
   socket.on("disconnect", () => {
@@ -139,7 +143,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("pong", function(data) {
-    console.log("Pong received from client");
+    // console.log("Pong received from client");
   });
 
   function sendHeartbeat() {

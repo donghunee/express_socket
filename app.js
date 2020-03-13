@@ -133,7 +133,7 @@ app.io.on("connection", socket => {
     let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
     if (idx > -1) {
       socket.adapter.rooms[roomName].userList[idx].queryUser = false;
-      if (socket.adapter.rooms[roomName].userList.length == idx) {
+      if (socket.adapter.rooms[roomName].userList.length == idx + 1) {
         socket.adapter.rooms[roomName].userList[0].queryUser = true;
       } else {
         socket.adapter.rooms[roomName].userList[idx + 1].queryUser = true;

@@ -112,7 +112,10 @@ app.io.on("connection", socket => {
   socket.on("startGame", roomName => {
     console.log("startGame");
     if (!socket.adapter.rooms[roomName].userList) {
+      console.log("null");
     } else {
+      console.log("Ok");
+
       let userWrap = {};
       userWrap.userList = socket.adapter.rooms[roomName].userList;
       userWrap.question = "랜덤 질문";

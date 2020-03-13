@@ -123,6 +123,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("questionPass", roomName => {
+    console.log("QPAss");
     const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
       item
     ) {

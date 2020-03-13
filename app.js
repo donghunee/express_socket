@@ -147,7 +147,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("vote", (roomName, isFront) => {
-    if (socket.adapter.rooms[roomName].vote) {
+    if (!socket.adapter.rooms[roomName].vote) {
       socket.adapter.rooms[roomName].vote = {};
       socket.adapter.rooms[roomName].vote.front = 0;
       socket.adapter.rooms[roomName].vote.back = 0;

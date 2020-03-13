@@ -177,10 +177,16 @@ app.io.on("connection", socket => {
       let voteWrap = {};
       voteWrap.front = socket.adapter.rooms[roomName].vote.front;
       voteWrap.back = socket.adapter.rooms[roomName].vote.back;
+      console.log(voteWrap);
       app.io.in(roomName.toString()).emit("voteOK", voteWrap);
     } else {
       app.io.in(roomName.toString()).emit("voteNum", { voteNum: voteNum });
     }
+  });
+
+  socket.on("gameStatus", () => {
+    console.log("gameStatus");
+    app.io.in(roomName.toString()).emit("gameStatus");
   });
 
   socket.on("disconnect", () => {

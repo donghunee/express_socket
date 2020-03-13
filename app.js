@@ -171,13 +171,12 @@ app.io.on("connection", socket => {
     let voteNum =
       socket.adapter.rooms[roomName].userList.length -
       socket.adapter.rooms[roomName].vote.number;
-
+    console.log("vote : " + voteNum);
     if (voteNum <= 0) {
       //투표 다 끝남
       let voteWrap = {};
       voteWrap.front = socket.adapter.rooms[roomName].vote.front;
       voteWrap.back = socket.adapter.rooms[roomName].vote.back;
-
       app.io.in(roomName.toString()).emit("voteOK", voteWrap);
     } else {
       app.io.in(roomName.toString()).emit("voteNum", { voteNum: voteNum });

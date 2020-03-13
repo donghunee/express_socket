@@ -110,10 +110,13 @@ app.io.on("connection", socket => {
   });
 
   socket.on("startGame", roomName => {
-    let userWrap = {};
-    userWrap.userList = socket.adapter.rooms[roomName].userList;
-    userWrap.question = "랜덤 질문";
-    app.io.in(roomName.toString()).emit("gameState", userWrap);
+    if (!socket.adapter.rooms[roomName].userList) {
+    } else {
+      let userWrap = {};
+      userWrap.userList = socket.adapter.rooms[roomName].userList;
+      userWrap.question = "랜덤 질문";
+      app.io.in(roomName.toString()).emit("gameState", userWrap);
+    }
   });
 
   socket.on("continueGame", roomName => {

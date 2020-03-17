@@ -87,6 +87,12 @@ app.io.on("connection", socket => {
       if (!socket.adapter.rooms[roomName].userList) {
         socket.adapter.rooms[roomName].userList = [];
       }
+
+      socket.adapter.rooms[roomName].vote = {};
+      socket.adapter.rooms[roomName].vote.front = 0;
+      socket.adapter.rooms[roomName].vote.back = 0;
+      socket.adapter.rooms[roomName].vote.number = 0;
+
       const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
         item
       ) {

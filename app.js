@@ -182,7 +182,29 @@ app.io.on("connection", socket => {
   });
 
   socket.on("vote", (roomName, isFront) => {
-    if (!socket.adapter.rooms[roomName].vote) {
+    try {
+      if (!socket.adapter.rooms[roomName].vote) {
+        socket.adapter.rooms[roomName].vote = {};
+        socket.adapter.rooms[roomName].vote.front = 0;
+        socket.adapter.rooms[roomName].vote.back = 0;
+        socket.adapter.rooms[roomName].vote.number = 0;
+        if (isFront) {
+          socket.adapter.rooms[roomName].vote.front += 1;
+          socket.adapter.rooms[roomName].vote.number += 1;
+        } else {
+          socket.adapter.rooms[roomName].vote.number += 1;
+          socket.adapter.rooms[roomName].vote.back += 1;
+        }
+      } else {
+        if (isFront) {
+          socket.adapter.rooms[roomName].vote.front += 1;
+          socket.adapter.rooms[roomName].vote.number += 1;
+        } else {
+          socket.adapter.rooms[roomName].vote.number += 1;
+          socket.adapter.rooms[roomName].vote.back += 1;
+        }
+      }
+    } catch (error) {
       socket.adapter.rooms[roomName].vote = {};
       socket.adapter.rooms[roomName].vote.front = 0;
       socket.adapter.rooms[roomName].vote.back = 0;
@@ -194,15 +216,8 @@ app.io.on("connection", socket => {
         socket.adapter.rooms[roomName].vote.number += 1;
         socket.adapter.rooms[roomName].vote.back += 1;
       }
-    } else {
-      if (isFront) {
-        socket.adapter.rooms[roomName].vote.front += 1;
-        socket.adapter.rooms[roomName].vote.number += 1;
-      } else {
-        socket.adapter.rooms[roomName].vote.number += 1;
-        socket.adapter.rooms[roomName].vote.back += 1;
-      }
     }
+
     let voteNum =
       socket.adapter.rooms[roomName].userList.length -
       socket.adapter.rooms[roomName].vote.number;

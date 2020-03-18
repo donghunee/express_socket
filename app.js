@@ -85,7 +85,9 @@ app.io.on("connection", socket => {
         wrap.king = false;
         wrap.queryUser = false;
       }
-      console.log(`join : ${socket.adapter.rooms[roomName]}`);
+      console.log(roomName);
+
+      console.log(socket.adapter.rooms[roomName]);
 
       if (!socket.adapter.rooms[roomName]["userList"]) {
         socket.adapter.rooms[roomName]["userList"] = [];

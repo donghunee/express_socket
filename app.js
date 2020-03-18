@@ -183,10 +183,15 @@ app.io.on("connection", socket => {
 
   socket.on("vote", (roomName, isFront) => {
     if (!socket.adapter.rooms[roomName]["vote"]) {
-      socket.adapter.rooms[roomName]["vote"] = {};
-      socket.adapter.rooms[roomName].vote.front = 0;
-      socket.adapter.rooms[roomName].vote.back = 0;
-      socket.adapter.rooms[roomName].vote.number = 0;
+      let wrap = {};
+      wrap.front = 0;
+      wrap.back = 0;
+      wrap.number = 0;
+
+      socket.adapter.rooms[roomName]["vote"] = wrap;
+      // socket.adapter.rooms[roomName].vote.front = 0;
+      // socket.adapter.rooms[roomName].vote.back = 0;
+      // socket.adapter.rooms[roomName].vote.number = 0;
       if (isFront) {
         socket.adapter.rooms[roomName].vote.front += 1;
         socket.adapter.rooms[roomName].vote.number += 1;

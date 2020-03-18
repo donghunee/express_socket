@@ -85,6 +85,8 @@ app.io.on("connection", socket => {
         wrap.king = false;
         wrap.queryUser = false;
       }
+      console.log(`join : ${socket.adapter.rooms[roomName]}`);
+
       if (!socket.adapter.rooms[roomName]["userList"]) {
         socket.adapter.rooms[roomName]["userList"] = [];
       }
@@ -182,6 +184,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("vote", (roomName, isFront) => {
+    console.log(`vote : ${roomName}`);
     console.log(socket.adapter.rooms[roomName]);
     if (!socket.adapter.rooms[roomName]["vote"]) {
       let wrap = {};

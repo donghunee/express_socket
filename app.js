@@ -186,7 +186,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("vote", (roomName, isFront) => {
-    console.log(`vote : ${roomName}`);
+    roomName = roomName.toString();
     console.log(socket.adapter.rooms[roomName]);
     if (!socket.adapter.rooms[roomName]["vote"]) {
       let wrap = {};

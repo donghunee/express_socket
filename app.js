@@ -18,6 +18,7 @@ app.io = require("socket.io")();
 
 app.io.on("connection", socket => {
   console.log("connent");
+
   setTimeout(sendHeartbeat, 9000);
 
   app.io.to(socket.id).emit("start", socket.id);
@@ -84,14 +85,14 @@ app.io.on("connection", socket => {
         wrap.king = false;
         wrap.queryUser = false;
       }
-      if (!socket.adapter.rooms[roomName].userList) {
-        socket.adapter.rooms[roomName].userList = [];
+      if (!socket.adapter.rooms[roomName]["userList"]) {
+        socket.adapter.rooms[roomName]["userList"] = [];
       }
 
-      socket.adapter.rooms[roomName].vote = {};
-      socket.adapter.rooms[roomName].vote.front = 0;
-      socket.adapter.rooms[roomName].vote.back = 0;
-      socket.adapter.rooms[roomName].vote.number = 0;
+      // socket.adapter.rooms[roomName].vote = {};
+      // socket.adapter.rooms[roomName].vote.front = 0;
+      // socket.adapter.rooms[roomName].vote.back = 0;
+      // socket.adapter.rooms[roomName].vote.number = 0;
 
       const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
         item
@@ -153,7 +154,6 @@ app.io.on("connection", socket => {
 
   socket.on("questionOK", roomName => {
     console.log("QuestOK");
-
     app.io.in(roomName.toString()).emit("questionOK");
   });
 
@@ -182,30 +182,8 @@ app.io.on("connection", socket => {
   });
 
   socket.on("vote", (roomName, isFront) => {
-    try {
-      if (!socket.adapter.rooms[roomName].vote) {
-        socket.adapter.rooms[roomName].vote = {};
-        socket.adapter.rooms[roomName].vote.front = 0;
-        socket.adapter.rooms[roomName].vote.back = 0;
-        socket.adapter.rooms[roomName].vote.number = 0;
-        if (isFront) {
-          socket.adapter.rooms[roomName].vote.front += 1;
-          socket.adapter.rooms[roomName].vote.number += 1;
-        } else {
-          socket.adapter.rooms[roomName].vote.number += 1;
-          socket.adapter.rooms[roomName].vote.back += 1;
-        }
-      } else {
-        if (isFront) {
-          socket.adapter.rooms[roomName].vote.front += 1;
-          socket.adapter.rooms[roomName].vote.number += 1;
-        } else {
-          socket.adapter.rooms[roomName].vote.number += 1;
-          socket.adapter.rooms[roomName].vote.back += 1;
-        }
-      }
-    } catch (error) {
-      socket.adapter.rooms[roomName].vote = {};
+    if (!socket.adapter.rooms[roomName]["vote"]) {
+      socket.adapter.rooms[roomName]["vote"] = {};
       socket.adapter.rooms[roomName].vote.front = 0;
       socket.adapter.rooms[roomName].vote.back = 0;
       socket.adapter.rooms[roomName].vote.number = 0;
@@ -216,7 +194,28 @@ app.io.on("connection", socket => {
         socket.adapter.rooms[roomName].vote.number += 1;
         socket.adapter.rooms[roomName].vote.back += 1;
       }
+    } else {
+      if (isFront) {
+        socket.adapter.rooms[roomName].vote.front += 1;
+        socket.adapter.rooms[roomName].vote.number += 1;
+      } else {
+        socket.adapter.rooms[roomName].vote.number += 1;
+        socket.adapter.rooms[roomName].vote.back += 1;
+      }
     }
+    // } catch (error) {
+    //   socket.adapter.rooms[roomName].vote = {};
+    //   socket.adapter.rooms[roomName].vote.front = 0;
+    //   socket.adapter.rooms[roomName].vote.back = 0;
+    //   socket.adapter.rooms[roomName].vote.number = 0;
+    //   if (isFront) {
+    //     socket.adapter.rooms[roomName].vote.front += 1;
+    //     socket.adapter.rooms[roomName].vote.number += 1;
+    //   } else {
+    //     socket.adapter.rooms[roomName].vote.number += 1;
+    //     socket.adapter.rooms[roomName].vote.back += 1;
+    //   }
+    // }
 
     let voteNum =
       socket.adapter.rooms[roomName].userList.length -
@@ -228,7 +227,7 @@ app.io.on("connection", socket => {
       let voteWrap = {};
       voteWrap.front = socket.adapter.rooms[roomName].vote.front;
       voteWrap.back = socket.adapter.rooms[roomName].vote.back;
-      console.log(voteWrap);
+      // console.log(voteWrap);
       app.io.in(roomName.toString()).emit("voteOK", voteWrap);
       socket.adapter.rooms[roomName].vote.front = 0;
       socket.adapter.rooms[roomName].vote.back = 0;
@@ -246,27 +245,27 @@ app.io.on("connection", socket => {
     console.log("user disconnected");
   });
 
-  socket.on("coin", (roomName, coin) => {
-    if (!socket.adapter.rooms[roomName].count) {
-      socket.adapter.rooms[roomName].count = 0;
-    }
-    socket.adapter.rooms[roomName].count += 1;
-    if (!socket.adapter.rooms[roomName].yes) {
-      socket.adapter.rooms[roomName].yes = 0;
-    }
-    if (!socket.adapter.rooms[roomName].no) {
-      socket.adapter.rooms[roomName].no = 0;
-    }
-    if (coin == 0) {
-    } else {
-    }
-    if (
-      socket.adapter.rooms[roomName].count ==
-      socket.adapter.rooms[roomName].length
-    ) {
-      app.io.to(roomName).emit("chat-msg", name, msg);
-    }
-  });
+  // socket.on("coin", (roomName, coin) => {
+  //   if (!socket.adapter.rooms[roomName].count) {
+  //     socket.adapter.rooms[roomName].count = 0;
+  //   }
+  //   socket.adapter.rooms[roomName].count += 1;
+  //   if (!socket.adapter.rooms[roomName].yes) {
+  //     socket.adapter.rooms[roomName].yes = 0;
+  //   }
+  //   if (!socket.adapter.rooms[roomName].no) {
+  //     socket.adapter.rooms[roomName].no = 0;
+  //   }
+  //   if (coin == 0) {
+  //   } else {
+  //   }
+  //   if (
+  //     socket.adapter.rooms[roomName].count ==
+  //     socket.adapter.rooms[roomName].length
+  //   ) {
+  //     app.io.to(roomName).emit("chat-msg", name, msg);
+  //   }
+  // });
 
   socket.on("pong", function(data) {
     // console.log("Pong received from client");

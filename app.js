@@ -114,6 +114,8 @@ app.io.on("connection", socket => {
       }
       // console.log(roomName.toString());
       // console.log(socket.adapter.rooms[roomName].userList);
+      console.log(socket.adapter.rooms[roomName]);
+
       app.io
         .in(roomName.toString())
         .emit("userList", socket.adapter.rooms[roomName].userList);
@@ -127,6 +129,8 @@ app.io.on("connection", socket => {
     } else {
       console.log("Ok");
       let userWrap = {};
+      console.log(socket.adapter.rooms[roomName]);
+
       userWrap.userList = socket.adapter.rooms[roomName].userList;
       userWrap.question = "랜덤 질문";
       console.log(userWrap);
@@ -157,7 +161,7 @@ app.io.on("connection", socket => {
   });
 
   socket.on("questionOK", roomName => {
-    console.log("QuestOK");
+    console.log(socket.adapter.rooms[roomName]);
     app.io.in(roomName.toString()).emit("questionOK");
   });
 

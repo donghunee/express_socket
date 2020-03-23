@@ -130,7 +130,6 @@ app.io.on("connection", socket => {
       console.log("Ok");
       let userWrap = {};
       console.log(socket.adapter.rooms[roomName]);
-
       userWrap.userList = socket.adapter.rooms[roomName].userList;
       userWrap.question = "랜덤 질문";
       console.log(userWrap);
@@ -191,6 +190,7 @@ app.io.on("connection", socket => {
 
   socket.on("vote", (roomName, isFront) => {
     roomName = roomName.toString();
+    console.log(roomName);
     console.log(socket.adapter.rooms[roomName]);
     if (!socket.adapter.rooms[roomName]["vote"]) {
       let wrap = {};

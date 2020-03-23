@@ -85,7 +85,7 @@ app.io.on("connection", socket => {
         wrap.king = false;
         wrap.queryUser = false;
       }
-      console.log(roomName);
+      console.log(typeof roomName);
 
       console.log(socket.adapter.rooms[roomName]);
 
@@ -190,14 +190,14 @@ app.io.on("connection", socket => {
 
   socket.on("vote", (roomName, isFront) => {
     roomName = roomName.toString();
-    console.log(roomName);
+    console.log(typeof roomName);
+
     console.log(socket.adapter.rooms[roomName]);
     if (!socket.adapter.rooms[roomName]["vote"]) {
       let wrap = {};
       wrap.front = 0;
       wrap.back = 0;
       wrap.number = 0;
-
       socket.adapter.rooms[roomName]["vote"] = wrap;
       // socket.adapter.rooms[roomName].vote.front = 0;
       // socket.adapter.rooms[roomName].vote.back = 0;

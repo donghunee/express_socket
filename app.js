@@ -9,7 +9,44 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 
-let room = [];
+let q = [
+  "나는 불타는 밤을 위한 필살속옷이 있다",
+  "나는 낮져밤이다",
+  "나는 여기에 결혼해도 괜찮을 것 같은 이성이 있다",
+  "나는 야외에서 해보았다,나는 위 아래 중에 위가 더 좋다",
+  "나는 솔직히 여기서 외모 세손가락 안에 든다고 생각한다",
+  "나는 지금 이 자리에 함께 나가고 싶은 사람이 있다",
+  "나는 남들이 모르는 나만의 특별한 성감대가 있다",
+  "나는 이 중에 진지하게 만나봤으면 하는 사람이 있다",
+  "나는 이 중에 단 둘이 있다면 함께 밤을 보내고 싶은 사람 있다",
+  "나는 지금 앉은 자리 말고 다른 자리로 바꾸고 싶다",
+  "나는 내 옆 사람이 맘에 든다",
+  "나는 옆 사람이 냄새가 심하다고 생각한다",
+  "나는 지금 내 옆 사람하고 손을 잡고 싶다",
+  "나는 내 옆 사람하고 단 둘이 있고 싶다",
+  "나는 우리들 중 누군가가 진지하게 고백하면 받아줄 것 같다",
+  "나는 근 한 달 사이 뜨거운 밤을 보냈다",
+  "나는 모르는 사람과 화끈한 밤을 보낸 적 있다",
+  "나는 서양이 더 좋다",
+  "나는 멀티플레이 해본 적 있다",
+  "나는 누군가를 만나는 중에 다른 사람과 밤을 보낸 적 있다",
+  "나는 여러 명을 동시에 만나본 적 있다",
+  "나는 어제 스스로를 위로 했다",
+  "나는 낮에 하는 게 더 좋다",
+  "나는 S다",
+  "나는 이 자리에서 몰래 소리없는 방귀를 뀌었다",
+  "나는 지금 이 게임을 하기 싫다",
+  "나는 이 게임을 하면서 거짓말을 한 적이 있다",
+  "나는 동성에게 관심을 가져본 적이 있다",
+  "나는 잘 안씻는다",
+  "나는 오늘 취하고 싶다",
+  "나는 오늘 술을 몰래 버린 적이 있다"
+];
+
+function randomItem(a) {
+  return a[Math.floor(Math.random() * a.length)];
+}
+
 let a = 0;
 
 var app = express();
@@ -77,7 +114,7 @@ app.io.on("connection", socket => {
       let wrap = {};
       wrap.userID = socket.id;
       wrap.userNickname = name;
-
+      roomName = roomName.toString();
       if (socket.adapter.rooms[roomName].length == 1) {
         wrap.king = true;
         wrap.queryUser = true;
@@ -110,7 +147,7 @@ app.io.on("connection", socket => {
         socket.adapter.rooms[roomName].userList.push(wrap);
         let userWrap = {};
         userWrap.userList = socket.adapter.rooms[roomName].userList;
-        userWrap.question = "랜덤 질문";
+        userWrap.question = randomItem(q);
       }
       // console.log(roomName.toString());
       // console.log(socket.adapter.rooms[roomName].userList);
@@ -131,7 +168,7 @@ app.io.on("connection", socket => {
       let userWrap = {};
       console.log(socket.adapter.rooms[roomName]);
       userWrap.userList = socket.adapter.rooms[roomName].userList;
-      userWrap.question = "랜덤 질문";
+      userWrap.question = randomItem(q);
       console.log(userWrap);
       app.io.in(roomName.toString()).emit("gameState", userWrap);
     }
@@ -155,7 +192,7 @@ app.io.on("connection", socket => {
     }
     let userWrap = {};
     userWrap.userList = socket.adapter.rooms[roomName].userList;
-    userWrap.question = "랜덤 질문";
+    userWrap.question = randomItem(q);
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 
@@ -183,7 +220,7 @@ app.io.on("connection", socket => {
     }
     let userWrap = {};
     userWrap.userList = socket.adapter.rooms[roomName].userList;
-    userWrap.question = "랜덤 질문";
+    userWrap.question = randomItem(q);
     console.log(socket.adapter.rooms[roomName].userList);
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
@@ -191,7 +228,6 @@ app.io.on("connection", socket => {
   socket.on("vote", (roomName, isFront) => {
     roomName = roomName.toString();
     console.log(typeof roomName);
-
     console.log(socket.adapter.rooms[roomName]);
     if (!socket.adapter.rooms[roomName]["vote"]) {
       let wrap = {};

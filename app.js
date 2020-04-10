@@ -63,34 +63,13 @@ app.io.on("connection", (socket) => {
   socket.on("leaveRoom", (roomName) => {
     socket.leave(roomName, () => {
       console.log("leave");
-      // console.log(socket.adapter.rooms[roomName]);
       try {
-        // const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
-        //   item
-        // ) {
-        //   return item.queryUser === true;
-        // });
-        // // console.log(itemToFind);
-        // let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
-        // if (idx > -1) {
-        //   socket.adapter.rooms[roomName].userList[idx].queryUser = false;
-        //   if (socket.adapter.rooms[roomName].userList.length == idx + 1) {
-        //     socket.adapter.rooms[roomName].userList[0].queryUser = true;
-        //   } else {
-        //     socket.adapter.rooms[roomName].userList[idx + 1].queryUser = true;
-        //   }
-        // }
-        // let userWrap = {};
-        // userWrap.userList = socket.adapter.rooms[roomName].userList;
-        // userWrap.question = randomItem(q);
-
         const itemToFind = socket.adapter.rooms[roomName].userList.find(
           function (item) {
             return item.userID === socket.id;
           }
         );
 
-        // console.log(itemToFind);
         let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
         if (idx > -1) {
           if (socket.adapter.rooms[roomName].userList[idx].king == true) {

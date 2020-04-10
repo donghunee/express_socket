@@ -40,7 +40,7 @@ let q = [
   "나는 동성에게 관심을 가져본 적이 있다",
   "나는 잘 안씻는다",
   "나는 오늘 취하고 싶다",
-  "나는 오늘 술을 몰래 버린 적이 있다"
+  "나는 오늘 술을 몰래 버린 적이 있다",
 ];
 
 function randomItem(a) {
@@ -53,20 +53,39 @@ var app = express();
 
 app.io = require("socket.io")();
 
-app.io.on("connection", socket => {
+app.io.on("connection", (socket) => {
   console.log("connent");
 
   setTimeout(sendHeartbeat, 9000);
 
   app.io.to(socket.id).emit("start", socket.id);
 
-  socket.on("leaveRoom", roomName => {
+  socket.on("leaveRoom", (roomName) => {
     socket.leave(roomName, () => {
       console.log("leave");
       // console.log(socket.adapter.rooms[roomName]);
       try {
+        // const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
+        //   item
+        // ) {
+        //   return item.queryUser === true;
+        // });
+        // // console.log(itemToFind);
+        // let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
+        // if (idx > -1) {
+        //   socket.adapter.rooms[roomName].userList[idx].queryUser = false;
+        //   if (socket.adapter.rooms[roomName].userList.length == idx + 1) {
+        //     socket.adapter.rooms[roomName].userList[0].queryUser = true;
+        //   } else {
+        //     socket.adapter.rooms[roomName].userList[idx + 1].queryUser = true;
+        //   }
+        // }
+        // let userWrap = {};
+        // userWrap.userList = socket.adapter.rooms[roomName].userList;
+        // userWrap.question = randomItem(q);
+
         const itemToFind = socket.adapter.rooms[roomName].userList.find(
-          function(item) {
+          function (item) {
             return item.userID === socket.id;
           }
         );
@@ -78,6 +97,30 @@ app.io.on("connection", socket => {
             console.log("king emit");
             if (socket.adapter.rooms[roomName].userList[idx + 1]) {
               socket.adapter.rooms[roomName].userList[idx + 1].king = true;
+            }
+
+            if (
+              socket.adapter.rooms[roomName].userList[idx].queryUser == true
+            ) {
+              if (socket.adapter.rooms[roomName].userList.length == idx + 1) {
+                socket.adapter.rooms[roomName].userList[0].queryUser = true;
+              } else {
+                socket.adapter.rooms[roomName].userList[
+                  idx + 1
+                ].queryUser = true;
+              }
+            }
+          } else {
+            if (
+              socket.adapter.rooms[roomName].userList[idx].queryUser == true
+            ) {
+              if (socket.adapter.rooms[roomName].userList.length == idx + 1) {
+                socket.adapter.rooms[roomName].userList[0].queryUser = true;
+              } else {
+                socket.adapter.rooms[roomName].userList[
+                  idx + 1
+                ].queryUser = true;
+              }
             }
           }
           socket.adapter.rooms[roomName].userList.splice(idx, 1);
@@ -102,7 +145,6 @@ app.io.on("connection", socket => {
       // if (socket.adapter.rooms[roomName].userList.length >= 1) {
       //   console.log("Qwe");
       // }
-
       // }
     });
   });
@@ -135,7 +177,7 @@ app.io.on("connection", socket => {
       // socket.adapter.rooms[roomName].vote.back = 0;
       // socket.adapter.rooms[roomName].vote.number = 0;
 
-      const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
+      const itemToFind = socket.adapter.rooms[roomName].userList.find(function (
         item
       ) {
         return item.userID === socket.id;
@@ -159,7 +201,7 @@ app.io.on("connection", socket => {
     });
   });
 
-  socket.on("startGame", roomName => {
+  socket.on("startGame", (roomName) => {
     console.log("startGame");
     if (!socket.adapter.rooms[roomName].userList) {
       console.log("null");
@@ -174,8 +216,8 @@ app.io.on("connection", socket => {
     }
   });
 
-  socket.on("continueGame", roomName => {
-    const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
+  socket.on("continueGame", (roomName) => {
+    const itemToFind = socket.adapter.rooms[roomName].userList.find(function (
       item
     ) {
       return item.queryUser === true;
@@ -196,14 +238,14 @@ app.io.on("connection", socket => {
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 
-  socket.on("questionOK", roomName => {
+  socket.on("questionOK", (roomName) => {
     console.log(socket.adapter.rooms[roomName]);
     app.io.in(roomName.toString()).emit("questionOK");
   });
 
-  socket.on("questionPass", roomName => {
+  socket.on("questionPass", (roomName) => {
     console.log("QPAss");
-    const itemToFind = socket.adapter.rooms[roomName].userList.find(function(
+    const itemToFind = socket.adapter.rooms[roomName].userList.find(function (
       item
     ) {
       return item.queryUser === true;
@@ -288,7 +330,7 @@ app.io.on("connection", socket => {
     }
   });
 
-  socket.on("gameStatus", roomName => {
+  socket.on("gameStatus", (roomName) => {
     app.io.in(roomName.toString()).emit("gameStatus");
   });
 
@@ -318,7 +360,7 @@ app.io.on("connection", socket => {
   //   }
   // });
 
-  socket.on("pong", function(data) {
+  socket.on("pong", function (data) {
     // console.log("Pong received from client");
   });
 
@@ -386,12 +428,12 @@ app.use(express.static(path.join(__dirname, "public")));
 // });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

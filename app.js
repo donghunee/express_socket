@@ -47,18 +47,14 @@ function randomItem(a) {
   return a[Math.floor(Math.random() * a.length)];
 }
 
-let a = 0;
-
 var app = express();
 
 app.io = require("socket.io")();
 
 app.io.on("connection", (socket) => {
-  console.log("connent");
+  setTimeout(sendHeartbeat, 9000); // 안드로이드의 경우엔 지속적인 핑퐁이 없을 경우 연결이 끊어지는 현상이 있어 setTimeout을 통해 관리
 
-  setTimeout(sendHeartbeat, 9000);
-
-  app.io.to(socket.id).emit("start", socket.id);
+  app.io.to(socket.id).emit("start", socket.id); // 시작
 
   socket.on("leaveRoom", (roomName) => {
     socket.leave(roomName, () => {
@@ -69,7 +65,6 @@ app.io.on("connection", (socket) => {
             return item.userID === socket.id;
           }
         );
-
         let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
         if (idx > -1) {
           if (socket.adapter.rooms[roomName].userList[idx].king == true) {
@@ -113,29 +108,16 @@ app.io.on("connection", (socket) => {
       } catch (error) {
         console.log(error);
       }
-      // if (socket.adapter.rooms[roomName]) {
-      // socket.adapter.rooms[roomName].userList.some(function(n) {
-      //   // if (n.userID == socket.id) {
-      //   //   console.log("eeqwe");
-      //   // }
-
-      // });
-      // console.log(socket.adapter.rooms[roomName].userList);
-      // if (socket.adapter.rooms[roomName].userList.length >= 1) {
-      //   console.log("Qwe");
-      // }
-      // }
     });
   });
 
   socket.on("joinRoom", (roomName, name) => {
     socket.join(roomName, () => {
-      // console.log(name + " join a " + roomName);
-      // socket.adapter.rooms[roomName].sockets[socket.id] = name;
       let wrap = {};
       wrap.userID = socket.id;
       wrap.userNickname = name;
       roomName = roomName.toString();
+
       if (socket.adapter.rooms[roomName].length == 1) {
         wrap.king = true;
         wrap.queryUser = true;
@@ -143,25 +125,17 @@ app.io.on("connection", (socket) => {
         wrap.king = false;
         wrap.queryUser = false;
       }
-      console.log(typeof roomName);
-
-      console.log(socket.adapter.rooms[roomName]);
 
       if (!socket.adapter.rooms[roomName]["userList"]) {
         socket.adapter.rooms[roomName]["userList"] = [];
       }
-
-      // socket.adapter.rooms[roomName].vote = {};
-      // socket.adapter.rooms[roomName].vote.front = 0;
-      // socket.adapter.rooms[roomName].vote.back = 0;
-      // socket.adapter.rooms[roomName].vote.number = 0;
 
       const itemToFind = socket.adapter.rooms[roomName].userList.find(function (
         item
       ) {
         return item.userID === socket.id;
       });
-      // console.log(itemToFind);
+
       let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
       if (idx > -1) {
       } else {
@@ -170,10 +144,6 @@ app.io.on("connection", (socket) => {
         userWrap.userList = socket.adapter.rooms[roomName].userList;
         userWrap.question = randomItem(q);
       }
-      // console.log(roomName.toString());
-      // console.log(socket.adapter.rooms[roomName].userList);
-      console.log(socket.adapter.rooms[roomName]);
-
       app.io
         .in(roomName.toString())
         .emit("userList", socket.adapter.rooms[roomName].userList);
@@ -181,16 +151,11 @@ app.io.on("connection", (socket) => {
   });
 
   socket.on("startGame", (roomName) => {
-    console.log("startGame");
     if (!socket.adapter.rooms[roomName].userList) {
-      console.log("null");
     } else {
-      console.log("Ok");
       let userWrap = {};
-      console.log(socket.adapter.rooms[roomName]);
       userWrap.userList = socket.adapter.rooms[roomName].userList;
       userWrap.question = randomItem(q);
-      console.log(userWrap);
       app.io.in(roomName.toString()).emit("gameState", userWrap);
     }
   });
@@ -201,8 +166,8 @@ app.io.on("connection", (socket) => {
     ) {
       return item.queryUser === true;
     });
-    // console.log(itemToFind);
     let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
+
     if (idx > -1) {
       socket.adapter.rooms[roomName].userList[idx].queryUser = false;
       if (socket.adapter.rooms[roomName].userList.length == idx + 1) {
@@ -218,18 +183,17 @@ app.io.on("connection", (socket) => {
   });
 
   socket.on("questionOK", (roomName) => {
-    console.log(socket.adapter.rooms[roomName]);
     app.io.in(roomName.toString()).emit("questionOK");
   });
 
   socket.on("questionPass", (roomName) => {
-    console.log("QPAss");
+    let userWrap = {};
+
     const itemToFind = socket.adapter.rooms[roomName].userList.find(function (
       item
     ) {
       return item.queryUser === true;
     });
-    // console.log(itemToFind);
     let idx = socket.adapter.rooms[roomName].userList.indexOf(itemToFind);
     if (idx > -1) {
       socket.adapter.rooms[roomName].userList[idx].queryUser = false;
@@ -239,10 +203,8 @@ app.io.on("connection", (socket) => {
         socket.adapter.rooms[roomName].userList[idx + 1].queryUser = true;
       }
     }
-    let userWrap = {};
     userWrap.userList = socket.adapter.rooms[roomName].userList;
     userWrap.question = randomItem(q);
-    console.log(socket.adapter.rooms[roomName].userList);
     app.io.in(roomName.toString()).emit("gameState", userWrap);
   });
 
@@ -256,9 +218,6 @@ app.io.on("connection", (socket) => {
       wrap.back = 0;
       wrap.number = 0;
       socket.adapter.rooms[roomName]["vote"] = wrap;
-      // socket.adapter.rooms[roomName].vote.front = 0;
-      // socket.adapter.rooms[roomName].vote.back = 0;
-      // socket.adapter.rooms[roomName].vote.number = 0;
       if (isFront) {
         socket.adapter.rooms[roomName].vote.front += 1;
         socket.adapter.rooms[roomName].vote.number += 1;
@@ -275,19 +234,6 @@ app.io.on("connection", (socket) => {
         socket.adapter.rooms[roomName].vote.back += 1;
       }
     }
-    // } catch (error) {
-    //   socket.adapter.rooms[roomName].vote = {};
-    //   socket.adapter.rooms[roomName].vote.front = 0;
-    //   socket.adapter.rooms[roomName].vote.back = 0;
-    //   socket.adapter.rooms[roomName].vote.number = 0;
-    //   if (isFront) {
-    //     socket.adapter.rooms[roomName].vote.front += 1;
-    //     socket.adapter.rooms[roomName].vote.number += 1;
-    //   } else {
-    //     socket.adapter.rooms[roomName].vote.number += 1;
-    //     socket.adapter.rooms[roomName].vote.back += 1;
-    //   }
-    // }
 
     let voteNum =
       socket.adapter.rooms[roomName].userList.length -
@@ -317,69 +263,17 @@ app.io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 
-  // socket.on("coin", (roomName, coin) => {
-  //   if (!socket.adapter.rooms[roomName].count) {
-  //     socket.adapter.rooms[roomName].count = 0;
-  //   }
-  //   socket.adapter.rooms[roomName].count += 1;
-  //   if (!socket.adapter.rooms[roomName].yes) {
-  //     socket.adapter.rooms[roomName].yes = 0;
-  //   }
-  //   if (!socket.adapter.rooms[roomName].no) {
-  //     socket.adapter.rooms[roomName].no = 0;
-  //   }
-  //   if (coin == 0) {
-  //   } else {
-  //   }
-  //   if (
-  //     socket.adapter.rooms[roomName].count ==
-  //     socket.adapter.rooms[roomName].length
-  //   ) {
-  //     app.io.to(roomName).emit("chat-msg", name, msg);
-  //   }
-  // });
-
-  socket.on("pong", function (data) {
-    // console.log("Pong received from client");
-  });
+  socket.on("pong", function (data) {});
 
   function sendHeartbeat() {
     setTimeout(sendHeartbeat, 9000);
     app.io.emit("ping", { beat: 1 });
   }
+
+  function findRoomIndex(socket) {}
 });
 
 function coinadd() {}
-
-// io.on('connection', function(socket){
-
-//     var userName = socket.id;
-
-//     io.to(socket.id).emit('change name', userName);
-
-//     socket.on('changed name', function(receivedUserName) {
-//         userName = receivedUserName;
-//         io.to(socket.id).emit('change name', userName);
-//     });
-
-//     socket.on('disconnect', function(){
-//         io.emit('leave', socket.id);
-//     });
-
-//     socket.on('send message', function(text){
-//         var date = new Date();
-//         client.rpush('chatLogs', JSON.stringify({
-//             userName: socket.id,
-//             message: text,
-//             date: addZero(date.getHours()) + ":" + addZero(date.getMinutes())
-//         }));
-//         io.emit('receive message', {
-//             userName: socket.id,
-//             message: text,
-//             date: addZero(date.getHours()) + ":" + addZero(date.getMinutes())
-//         });
-//     });
-// });
 
 app.use("/", indexRouter);
 // view engine setup

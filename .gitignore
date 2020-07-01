@@ -1,4 +1,5 @@
 node_modules/
+public/data/
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
